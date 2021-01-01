@@ -1,23 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { InputGroup, FormControl, Button } from 'react-bootstrap';
 
 function App() {
+  const [text, setText] = useState({
+    title: '',
+    body: ''
+  })
+
+  const handleInputChange =  e =>{
+    const { name, value } = e.target;
+    setText({...text, [name]: value})
+  }
+
+  const handleFormSubmit = async e => {
+    await fetch('/api/test/create', {
+      method: 'POST',
+      body: text
+    })
+  }
+
+  const styles = {
+    input: {
+      marginTop: '3vh'
+    },
+    button: {
+      marginTop: '3vh'
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='container' >
+      <InputGroup size="lg" style={styles.input}>
+        <InputGroup.Prepend>
+          <InputGroup.Text id="inputGroup-sizing-lg">Title</InputGroup.Text>
+        </InputGroup.Prepend>
+        <FormControl aria-label="Large" name='title' onChange={handleInputChange} aria-describedby="inputGroup-sizing-sm" />
+      </InputGroup>
+      <InputGroup size="lg" style={styles.input}>
+        <InputGroup.Prepend>
+          <InputGroup.Text id="inputGroup-sizing-lg">Body</InputGroup.Text>
+        </InputGroup.Prepend>
+        <FormControl aria-label="Large" name='body' onChange={handleInputChange} aria-describedby="inputGroup-sizing-sm" />
+      </InputGroup>
+      <Button variant='primary' onClick={handleFormSubmit} style={styles.button}>Submit</Button>
     </div>
   );
 }

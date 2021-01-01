@@ -12,10 +12,6 @@ let seedData = [
     body: 'Test Body1'
   },
   {
-    title: 'Test Title1',
-    body: 'Test Body1'
-  },
-  {
     title: 'Test Title2',
     body: 'Test Body2'
   },
