@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const db = require('../models');
 
-router.post('/test/create', ({body}, res) =>{
+router.post("/test/create", ({body}, res) =>{
   console.log('something')
   db.Test.create(body)
     .then(data => res.json(data))

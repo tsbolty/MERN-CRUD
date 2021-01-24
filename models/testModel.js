@@ -12,6 +12,6 @@ const TestModel = new Schema({
   }
 });
 
-const Test = mongoose.model('test_collection', TestModel);
+const Test = mongoose.model('Test', TestModel);
 
 module.exports = Test;

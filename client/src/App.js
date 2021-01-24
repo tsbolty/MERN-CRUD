@@ -13,10 +13,14 @@ function App() {
   }
 
   const handleFormSubmit = async e => {
-    await fetch('/api/test/create', {
-      method: 'POST',
-      body: text
+    await fetch("/api/test/create", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(text)
     })
+    console.log("line 20 front end")
   }
 
   const styles = {
