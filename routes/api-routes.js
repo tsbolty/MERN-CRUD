@@ -2,7 +2,6 @@ const router = require('express').Router();
 const db = require('../models');
 
 router.post("/test/create", ({body}, res) =>{
-  console.log('something')
   db.Test.create(body)
     .then(data => res.json(data))
     .catch(err => console.log(err));
@@ -14,10 +13,16 @@ router.get('/test/read', (req, res) =>{
     .catch(err => console.log(err));
 });
 
+router.get('/test/get/:id', ({params}, res) => {
+  db.Test.find({_id: params.id})
+    .then(data => res.json(data))
+    .catch(err => console.error(err))
+})
+
 router.put('/test/update/:id', ({params, body}, res) =>{
   db.Test.findByIdAndUpdate(
     params.id,
-    {$set: {title: params.title, body: params.body}},
+    {$set: {title: body.title, body: body.body}},
     {new: true}
   )
     .then(data =>{
