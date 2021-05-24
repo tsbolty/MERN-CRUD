@@ -12,21 +12,25 @@ app.use(logger("dev"));
 app.use(express.static("public"));
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
+	app.use(express.static("client/build"));
 }
 app.use(routes);
 
 // Connect to the Mongo DB
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/MERN", { 
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false
-}, function(err) {
-  if (err) throw err;
-  console.log(`mongoose connection successful`);
-  
-  app.listen(PORT, function() {
-    console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-  });
-});
+mongoose.connect(
+	process.env.MONGODB_URI || "mongodb://localhost/MERN",
+	{
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useCreateIndex: true,
+		useFindAndModify: false
+	},
+	function (err) {
+		if (err) throw err;
+		console.log(`mongoose connection successful`);
+
+		app.listen(PORT, function () {
+			console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+		});
+	}
+);
