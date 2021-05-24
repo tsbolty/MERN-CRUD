@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
+import API from "./API";
 
 function App() {
-	const [text, setText] = useState({
-		title: "",
-		body: ""
+	const [items, setItems] = useState({
+		text: {
+			title: "",
+			body: ""
+		},
+		allItems: [],
+		updating: false
 	});
-	const [allItems, setAllItems] = useState([]);
-	const [updating, setUpdating] = useState(false);
 
 	useEffect(() => {
 		getAllItems();
 	}, []);
 
 	const getAllItems = async () => {
-		const res = await fetch("/api/test/read");
+		const res = await API.getAllItems();
 		const data = await res.json();
-		setAllItems(data);
+		setItems({
+			...items,
+			allItems: data,
+			updating: false,
+			text: { title: "", body: "" }
+		});
 	};
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setText({ ...text, [name]: value });
+		setItems({ ...items, text: { ...items.text, [name]: value } });
 	};
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			await fetch("/api/test/create", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(text)
-			});
+			await API.postItem(items.text);
 			alert("successfully created item");
-			setText({ title: "", body: "" });
+			setItems({ ...items, text: { title: "", body: "" } });
 			getAllItems();
 		} catch (err) {
 			alert("something went wrong creating that item: ", err);
@@ -43,18 +45,10 @@ function App() {
 	};
 	const handleUpdateSubmit = async (e) => {
 		e.preventDefault();
-		console.log("hit update submit function");
-		if (text.title.length && text.body.length) {
+		if (items.text.title.length && items.text.body.length) {
 			try {
-				await fetch(`/api/test/update/${text.id}`, {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(text)
-				});
-				setUpdating(false);
-				setText({ title: "", body: "" });
+				await API.updateItem(items.text);
+				// setItems({ ...items, updating: false, text: { title: "", body: "" } });
 				getAllItems();
 				alert("you updated that note");
 			} catch (err) {
@@ -65,12 +59,7 @@ function App() {
 
 	const handleDelete = async (id) => {
 		try {
-			await fetch(`/api/test/delete/${id}`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json"
-				}
-			});
+			await API.deleteItem(id);
 			alert("Item deleted");
 			getAllItems();
 		} catch (err) {
@@ -79,8 +68,7 @@ function App() {
 	};
 
 	const updateItem = async (title, body, id) => {
-		setText({ title, body, id });
-		setUpdating(true);
+		setItems({ ...items, text: { title, body, id }, updating: true });
 	};
 
 	const styles = {
@@ -102,7 +90,7 @@ function App() {
 					<FormControl
 						aria-label='Large'
 						name='title'
-						value={text.title}
+						value={items.text.title}
 						onChange={handleInputChange}
 						aria-describedby='inputGroup-sizing-sm'
 					/>
@@ -113,7 +101,7 @@ function App() {
 					</InputGroup.Prepend>
 					<FormControl
 						aria-label='Large'
-						value={text.body}
+						value={items.text.body}
 						name='body'
 						onChange={handleInputChange}
 						aria-describedby='inputGroup-sizing-sm'
@@ -123,14 +111,14 @@ function App() {
 					variant='primary'
 					style={styles.button}
 					onClick={(e) =>
-						updating ? handleUpdateSubmit(e) : handleFormSubmit(e)
+						items.updating ? handleUpdateSubmit(e) : handleFormSubmit(e)
 					}>
-					Submit
+					{items.updating ? "Update" : "Submit"}
 				</Button>
 			</form>
 			<br />
 			<ul style={{ listStyle: "none" }}>
-				{allItems.map((item) => (
+				{items.allItems.map((item) => (
 					<li key={item._id}>
 						<h5>{item.title}</h5>
 						<p>{item.body}</p>
